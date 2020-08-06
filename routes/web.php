@@ -13,6 +13,20 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/', 'IndexController@show')->name('index');
+    Route::resource('pages', 'PageController')->only([
+        'show', 'store'
+    ]);
+});
+
+Route::prefix('admin')->middleware('auth')->group(function () {
+    Route::name('admin')->resource('pages', 'Admin\PageController');
+});
+
+Route::prefix('admin')->middleware('auth')->group(function () {
+    Route::name('admin')->resource('pages', 'Admin\PageController');
+    Route::name('portfolios')->resource('portfolios', 'Admin\PortfolioController');
+    Route::name('services')->resource('services', 'Admin\ServiceController');
 });
