@@ -1,8 +1,8 @@
 /*
 Author URI: http://webthemez.com/
-Note: 
-Licence under Creative Commons Attribution 3.0 
-Do not remove the back-link in this web template 
+Note:
+Licence under Creative Commons Attribution 3.0
+Do not remove the back-link in this web template
 -------------------------------------------------------*/
 
 $(window).load(function() {
@@ -17,7 +17,7 @@ $(document).ready(function() {
         return false
 
     });
-	
+
     function resizeText() {
         var preferredWidth = 767;
         var displayWidth = window.innerWidth;
@@ -95,7 +95,7 @@ $(document).ready(function() {
 
         return columnNumb;
     }
-	
+
     function setColumns() {
         var winWidth = $(window).width(),
             columnNumb = splitColumns(),
@@ -130,11 +130,3 @@ wow = new WOW({
     offset: 100
 });
 wow.init();
-document.getElementById('').onclick = function() {
-    var section = document.createElement('section');
-    section.className = 'wow fadeInDown';
-    section.className = 'wow shake';
-    section.className = 'wow zoomIn';
-    section.className = 'wow lightSpeedIn';
-    this.parentNode.insertBefore(section, this);
-};
