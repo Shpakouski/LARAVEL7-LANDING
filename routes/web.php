@@ -14,8 +14,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-Route::middleware('auth')->group(function () {
-    Route::get('/', 'IndexController@show')->name('index');
+Route::middleware('web')->group(function () {
+    Route::get('/', 'IndexController@index')->name('index');
     Route::resource('pages', 'PageController')->only([
         'show', 'store'
     ]);
