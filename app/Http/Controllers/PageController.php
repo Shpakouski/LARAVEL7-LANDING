@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class PageController extends Controller
 {
@@ -29,18 +30,35 @@ class PageController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
     {
-        //
+        $messages = [
+            'required' => "Поле :attribute обязательно к заполнению",
+            'email' => "Поле :attribute должно соответствовать email адресу"
+        ];
+        $this->validate($request, [
+            'name' => 'required|max:255',
+            'email' => 'required|email',
+            'text' => 'required'
+        ], $messages);
+        $data = $request->all();
+        Mail::send('emails.email', ['data' => $data],
+            function ($message) use ($data) {
+                $mailAdmin = env('MAIL_ADMIN');
+                $message
+                    ->from($data['email'], $data['name'])
+                    ->to($mailAdmin)->subject('Feedback');
+            });
+        return redirect()->route('index')->with('status', 'Email is send');
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -51,7 +69,7 @@ class PageController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -62,8 +80,8 @@ class PageController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
@@ -74,7 +92,7 @@ class PageController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
