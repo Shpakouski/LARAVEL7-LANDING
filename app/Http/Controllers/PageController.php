@@ -50,9 +50,12 @@ class PageController extends Controller
                 $mailAdmin = env('MAIL_ADMIN');
                 $message
                     ->from($data['email'], $data['name'])
-                    ->to($mailAdmin)->subject('Feedback');
+                    ->to($mailAdmin,'Vasya')->subject('Feedback');
             });
-        return redirect()->route('index')->with('status', 'Email is send');
+        if (!Mail::failures()) {
+            return redirect()->route('index')->with('status', 'Email is send');
+        }
+
     }
 
     /**
