@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Page;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
@@ -62,11 +63,24 @@ class PageController extends Controller
      * Display the specified resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function show($id)
     {
-        //
+        if(!$id){
+            abort(404);
+        }
+        if(view()->exists('page')){
+            $page=Page::where('alias',strip_tags($id))->first();
+            $data = [
+                'title' => $page->name,
+                'page' => $page,
+            ];
+            return view('page',$data);
+        } else{
+            abort(404);
+        }
+
     }
 
     /**
