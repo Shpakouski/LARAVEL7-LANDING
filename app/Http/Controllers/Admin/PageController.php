@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Page;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class PageController extends Controller
 {
@@ -50,11 +51,33 @@ class PageController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
     {
-        //
+        $input = $request->except('_token');
+        $messages = [
+            'required' => 'Поле :attribute обязательно к заполнению',
+            'unique' => 'Такое имя :attribute уже занято',
+            'max' => 'Поле :attribute должно быть не более :max символов',
+        ];
+        $validator = Validator::make($input,[
+            'name' => 'required|max:255',
+            'alias' => 'required|unique:pages|max:255',
+            'text' => 'required'
+        ],$messages);
+        if($validator->fails()){
+            return redirect()->route('admin.pages.create')->withErrors($validator)->withInput();
+        }
+        if($request->hasFile('images')){
+            $file=$request->file('images');
+            $input['images'] = $file->getClientOriginalName();
+            $file->move(public_path()."/assets/img",$input['images']);
+        }
+        if(Page::create($input)){
+            return redirect('admin')->with('status', 'Страница добавлена');
+        }
+
     }
 
     /**

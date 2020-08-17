@@ -1,6 +1,6 @@
 <div class="wrapper container-fluid">
 
-    {!! Form::open(['url' => route('admin.pages.create'),'class'=>'form-horizontal','method'=>'POST','enctype'=>'multipart/form-data']) !!}
+    {!! Form::open(['url' => route('admin.pages.store'),'class'=>'form-horizontal','method'=>'POST','enctype'=>'multipart/form-data']) !!}
 
 
     <div class="form-group">
