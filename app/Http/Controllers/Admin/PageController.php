@@ -94,7 +94,7 @@ class PageController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\Page  $page
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function edit(Page $page)
@@ -115,7 +115,7 @@ class PageController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \App\Page  $page
      * @return \Illuminate\Http\RedirectResponse
      */
     public function update(Request $request,Page $page)
@@ -154,11 +154,15 @@ class PageController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param  \App\Page  $page
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function destroy($id)
+    public function destroy(Page $page)
     {
-        //
+        if($page->delete()){
+            return redirect('admin/pages')->with('status', 'Страница удалена');
+        }
+        return redirect('admin/pages')->with('status', 'Что-то пошло не так...Страница не удалена...');
+
     }
 }
