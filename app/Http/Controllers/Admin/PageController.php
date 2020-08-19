@@ -95,11 +95,20 @@ class PageController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function edit($id)
+    public function edit(Page $page)
     {
-        //
+
+        $old = $page->toArray();
+        if(view()->exists('admin.pages_edit')){
+            $data = [
+                'title' => 'Редактирование страницы - '.$old['name'],
+                'data' => $old
+            ];
+            return view('admin.pages_edit',$data);
+        }
+        abort(404);
     }
 
     /**
@@ -107,11 +116,39 @@ class PageController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, $id)
+    public function update(Request $request,Page $page)
     {
-        //
+        $input = $request->except(['_token','_method']);
+        $messages = [
+            'required' => 'Поле :attribute обязательно к заполнению',
+            'unique' => 'Такое имя :attribute уже занято',
+            'max' => 'Поле :attribute должно быть не более :max символов',
+        ];
+        $validator = Validator::make($input,[
+            'name' => 'required|max:255',
+            'alias' => 'required|unique:pages,alias,'.$input['id'].'|max:255',
+            'text' => 'required'
+        ],$messages);
+        if($validator->fails()){
+            return redirect()->route('admin.pages.edit',['page' => $input['id']])->withErrors($validator)->withInput();
+        }
+        if($request->hasFile('images')){
+            $file=$request->file('images');
+            $input['images'] = $file->getClientOriginalName();
+            $file->move(public_path()."/assets/img",$input['images']);
+        }else{
+            $input['images'] = $input['old_images'];
+        }
+        unset($input['old_images']);
+
+        $page->fill($input);
+        if($page->update()){
+            return redirect('admin')->with('status', 'Страница обновлена');
+        }
+
+
     }
 
     /**
